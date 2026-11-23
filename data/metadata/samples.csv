@@ -1,0 +1,5 @@
+<CodeBlock language="csv" editable>
+sample_id,condition,layout,read1,read2
+GSM461177,untreated,paired,GSM461177_1_subsampled.fastqsanger,GSM461177_2_subsampled.fastqsanger
+GSM461180,pasilla_rnai,paired,GSM461180_1_subsampled.fastqsanger,GSM461180_2_subsampled.fastqsanger
+</CodeBlock>

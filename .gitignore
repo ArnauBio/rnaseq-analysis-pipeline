@@ -1,0 +1,27 @@
+<CodeBlock language="gitignore" editable>
+# Raw sequencing data
+/data/raw/**
+/reference/**
+/results/**
+/figures/**
+/logs/**
+.venv/
+venv/
+pycache/
+*.pyc
+.pytest_cache/
+.Rhistory
+.RData
+.Rproj.user/
+.ipynb_checkpoints/
+.DS_Store
+Thumbs.db
+.vscode/
+*.tmp
+*.bak
+!/data/raw/.gitkeep
+!/reference/.gitkeep
+!/results/**/.gitkeep
+!/figures/.gitkeep
+!/logs/.gitkeep
+</CodeBlock>
