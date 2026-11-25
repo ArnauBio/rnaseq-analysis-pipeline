@@ -6,7 +6,7 @@ set -euo pipefail
 # Project: RNA-seq Analysis Pipeline
 
 PROJECT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
-RAW_DIR="${1:-PROJECT_DIR/data/raw"
+RAW_DIR="${1:-PROJECT_DIR/data/raw}"
 
 echo "=================================="
 echo "  RNA-seq FASTQ Validation"
@@ -125,11 +125,9 @@ for r1 in "${r1_files[@]}"; do
         }
 
         printf "PASS: %d read pairs validated\n", pairs
-    }
-    ' "$r1"
+    }' "$r1"
 
 done
 
-echo
 echo "All samples passed FASTQ validation."
 
