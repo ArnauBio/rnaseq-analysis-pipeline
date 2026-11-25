@@ -9,7 +9,8 @@ This project aims to develop a reproducible computational workflow for processin
 
 The workflow is being developed independently as part of a bioinformatics portfolio, using publicly available sequencing data.
 
-**Project status:** In development — initial setup and data acquisition.
+**Project status:** In development — FASTQ structural validation, paired-end synchronization, and automated testing completed.
+Sequencing quality control pending.
 
 ## Biological Question
 
@@ -52,15 +53,19 @@ Dataset source: https://zenodo.org/records/6457007
 
 Exact software versions and dependencies will be recorded as the workflow is implemented.
 
+
 ## Repository Structure
 
 ```text
 rnaseq-analysis-pipeline/
+├── analysis/
+│   └── scripts/
+│       └── 01_validate_fastq.sh
 ├── data/
 │   ├── raw/
 │   └── metadata/
+│       └── samples.csv
 ├── reference/
-├── scripts/
 ├── results/
 │   ├── qc/
 │   ├── alignment/
@@ -69,9 +74,16 @@ rnaseq-analysis-pipeline/
 ├── figures/
 ├── logs/
 ├── docs/
+├── tests/
+│   └── test_fastq_validation.sh
 ├── .gitignore
 └── README.md
 ```
+
+Raw sequencing data, reference files, and generated analysis outputs are excluded from Git.
+
+Some directories may not appear on GitHub until they contain tracked files.
+
 
 ## Reproducibility
 
@@ -166,8 +178,56 @@ These results establish consistency under the implemented validation rules. They
 
 ### Limitations and Next Steps
 
-The validator currently targets the filename and mate-identifier conventions used by the selected Pasilla training dataset.
+The FASTQ validation module has passed structural and paired-end synchronization checks on the initial Pasilla training data and six automated test scenarios.
 
-Further development includes automated tests using deliberately malformed FASTQ records, additional integrity checks, and more comprehensive validation of sequence content.
+The current implementation has the following limitations:
 
-The next analytical stage will assess sequencing quality using FastQC and MultiQC.
+- It is designed for the filename and paired-read identifier conventions used in this project.
+- Nucleotide alphabets and FASTQ quality-score encoding are not comprehensively validated.
+- File checksums have been calculated but have not yet been verified against the original data provider's checksums.
+- Automated negative tests check for nonzero exit statuses and error diagnostics but do not yet assert specific error categories.
+- Additional edge cases and independent validation would be required before considering the tool production-ready.
+
+**Next stage:** Sequencing quality assessment using FastQC and MultiQC, followed by evidence-based decisions about read preprocessing.
+
+
+### Automated Testing
+
+The FASTQ validation module is accompanied by an automated Bash test suite:
+
+`tests/test_fastq_validation.sh`
+
+The test suite uses small synthetic paired-end FASTQ files to evaluate whether the validator accepts correctly formatted data and detects common input errors.
+
+Each test creates its own input conditions without modifying the original sequencing dataset.
+
+#### Test Scenarios
+
+| Test | Scenario | Expected behavior | Result |
+|---|---|---|---|
+| 1 | Valid paired-end FASTQ | Accept valid records | PASS |
+| 2 | Mismatched paired-read identifiers | Reject incorrect read pairing | PASS |
+| 3 | Invalid FASTQ header | Reject malformed headers | PASS |
+| 4 | Sequence-quality length mismatch | Reject inconsistent record lengths | PASS |
+| 5 | Incomplete FASTQ record | Reject incomplete records | PASS |
+| 6 | Missing R2 file | Reject missing mate files | PASS |
+
+**Results: 6/6 automated tests passed.**
+
+#### Running the Tests
+
+From the repository root:
+
+```bash
+./tests/test_fastq_validation.sh
+```
+
+The test suite uses temporary directories and synthetic FASTQ records to avoid modifying the original sequencing files.
+
+It verifies that valid inputs produce successful execution and that malformed inputs trigger a nonzero exit status accompanied by an error diagnostic.
+
+#### Testing Limitations
+
+The current tests demonstrate correct behavior for the six defined scenarios. They do not guarantee that every possible FASTQ formatting or input failure is detected.
+
+Negative tests currently verify the presence of an error diagnostic rather than matching a specific error category. Future improvements may include more precise assertions, additional malformed input scenarios, and automated execution through continuous integration.
