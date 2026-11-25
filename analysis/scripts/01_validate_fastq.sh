@@ -6,7 +6,7 @@ set -euo pipefail
 # Project: RNA-seq Analysis Pipeline
 
 PROJECT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
-RAW_DIR="$PROJECT_DIR/data/raw"
+RAW_DIR="${1:-PROJECT_DIR/data/raw"
 
 echo "=================================="
 echo "  RNA-seq FASTQ Validation"
